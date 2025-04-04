@@ -97,17 +97,19 @@
         status.textContent = "Registrando...";
         status.style.color = "#333";
 
-        const response = await fetch(`${scriptUrl}?${params.toString()}`, { method: "GET" });
-        const resultado = await response.json();
+        await fetch(`${scriptUrl}?${params.toString()}`, {
+          method: "GET",
+          mode: "no-cors"
+        });
 
-        status.textContent = resultado.mensagem;
-        status.style.color = resultado.status === "Sucesso" ? "green" : "red";
+        // OBS: Como usamos "no-cors", não dá para ler a resposta.
+        // Então exibimos uma mensagem otimista.
+        status.textContent = "Ponto registrado (verifique na planilha)";
+        status.style.color = "green";
 
-        if (resultado.status === "Sucesso") {
-          document.getElementById("data").value = "";
-          document.getElementById("hora").value = "";
-          document.getElementById("tipo").selectedIndex = 0;
-        }
+        document.getElementById("data").value = "";
+        document.getElementById("hora").value = "";
+        document.getElementById("tipo").selectedIndex = 0;
 
       } catch (erro) {
         status.textContent = "Erro ao registrar ponto.";
