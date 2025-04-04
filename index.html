@@ -93,7 +93,7 @@
           return;
         }
 
-        const urlAppScript = 'https://script.google.com/macros/s/SEU_DEPLOY_ID/exec';
+        const urlAppScript = 'https://script.google.com/macros/s/AKfycbzFKPboWkqwcngmPkQWtoZ6CefZTZwoB2X80KGqVDisLOTC7dudFUDda1F-M4SYABxTEw/exec';
         const fullURL = `${urlAppScript}?dataSelecionada=${encodeURIComponent(data)}&horaDigitada=${encodeURIComponent(hora)}&tipoRegistro=${encodeURIComponent(tipo)}`;
 
         fetch(fullURL)
