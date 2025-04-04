@@ -1,152 +1,117 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registro de Ponto</title>
-    <meta name="theme-color" content="#4CAF50" />
-    <link rel="manifest" href="manifest.json" />
-    <link rel="icon" href="icon-192.png" />
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Ponto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#4CAF50">
+  <link rel="manifest" href="manifest.json">
 
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        background-color: #f7f7f7;
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f7f7f7;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #444;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #status {
+      text-align: center;
+      font-weight: bold;
+      color: green;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Registro de Ponto</h2>
+
+  <label for="data">Data</label>
+  <input type="date" id="data" />
+
+  <label for="hora">Hora</label>
+  <input type="time" id="hora" />
+
+  <label for="tipo">Tipo de Registro</label>
+  <select id="tipo">
+    <option value="entrada">Entrada</option>
+    <option value="saida_almoco">Saída para Almoço</option>
+    <option value="retorno_almoco">Retorno do Almoço</option>
+    <option value="saida">Saída</option>
+  </select>
+
+  <button onclick="registrar()">Registrar Ponto</button>
+
+  <p id="status"></p>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log("Service Worker registrado:", reg.scope))
+        .catch(err => console.log("Erro ao registrar o Service Worker:", err));
+    }
+
+    function registrar() {
+      const data = document.getElementById("data").value;
+      const hora = document.getElementById("hora").value;
+      const tipo = document.getElementById("tipo").value;
+      const status = document.getElementById("status");
+
+      if (!data || !hora || !tipo) {
+        status.innerText = "Preencha todos os campos.";
+        status.style.color = "red";
+        return;
       }
-      h2 {
-        text-align: center;
-        color: #333;
-      }
-      label {
-        display: block;
-        margin-top: 10px;
-        font-weight: bold;
-        color: #444;
-      }
-      input, select, button {
-        width: 100%;
-        padding: 10px;
-        margin-top: 5px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        box-sizing: border-box;
-      }
-      button {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        font-weight: bold;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-      button:hover {
-        background-color: #45a049;
-      }
-      #status {
-        text-align: center;
-        font-weight: bold;
-        color: green;
-        margin-top: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <h2>Registro de Ponto</h2>
 
-    <label for="data">Data</label>
-    <input type="date" id="data" />
+      const urlAppScript = 'https://script.google.com/macros/s/AKfycbw3fIogEVHNyQPb9dzozLRbQZpLHruYYGxnmGxa_PLlsrV39xe1uFb_zSPKaZAci373nA/exec';
+      const fullURL = `${urlAppScript}?dataSelecionada=${encodeURIComponent(data)}&horaDigitada=${encodeURIComponent(hora)}&tipoRegistro=${encodeURIComponent(tipo)}`;
 
-    <label for="hora">Hora</label>
-    <input type="time" id="hora" />
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = fullURL;
+      document.body.appendChild(iframe);
 
-    <label for="tipo">Tipo de Registro</label>
-    <select id="tipo">
-      <option value="entrada">Entrada</option>
-      <option value="saida_almoco">Saída para Almoço</option>
-      <option value="retorno_almoco">Retorno do Almoço</option>
-      <option value="saida">Saída</option>
-    </select>
+      status.innerText = "Ponto registrado (verifique na planilha)";
+      status.style.color = "green";
 
-    <button onclick="registrar()">Registrar Ponto</button>
+      document.getElementById("data").value = "";
+      document.getElementById("hora").value = "";
+      document.getElementById("tipo").selectedIndex = 0;
 
-    <p id="status"></p>
-
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log("Service Worker registrado:", reg.scope))
-          .catch(err => console.log("Erro ao registrar Service Worker:", err));
-      }
-
-      function registrar() {
-  const data = document.getElementById("data").value;
-  const hora = document.getElementById("hora").value;
-  const tipo = document.getElementById("tipo").value;
-  const status = document.getElementById("status");
-
-  if (!data || !hora || !tipo) {
-    status.innerText = "Preencha todos os campos.";
-    status.style.color = "red";
-    return;
-  }
-
-  const urlAppScript = 'function registrar() {
-  const data = document.getElementById("data").value;
-  const hora = document.getElementById("hora").value;
-  const tipo = document.getElementById("tipo").value;
-  const status = document.getElementById("status");
-
-  if (!data || !hora || !tipo) {
-    status.innerText = "Preencha todos os campos.";
-    status.style.color = "red";
-    return;
-  }
-
-  const urlAppScript = 'https://script.google.com/macros/s/AKfycbzFKPboWkqwcngmPkQWtoZ6CefZTZwoB2X80KGqVDisLOTC7dudFUDda1F-M4SYABxTEw/exec';
-  const fullURL = `${urlAppScript}?dataSelecionada=${encodeURIComponent(data)}&horaDigitada=${encodeURIComponent(hora)}&tipoRegistro=${encodeURIComponent(tipo)}`;
-
-  // Abre a URL em um iframe invisível
-  const iframe = document.createElement('iframe');
-  iframe.style.display = 'none';
-  iframe.src = fullURL;
-  document.body.appendChild(iframe);
-
-  status.innerText = "Ponto registrado (verifique na planilha)";
-  status.style.color = "green";
-
-  document.getElementById("data").value = "";
-  document.getElementById("hora").value = "";
-  document.getElementById("tipo").selectedIndex = 0;
-
-  setTimeout(() => {
-    status.innerText = "";
-    document.body.removeChild(iframe); // limpa o iframe depois
-  }, 3000);
-}
-';
-  const fullURL = `${urlAppScript}?dataSelecionada=${encodeURIComponent(data)}&horaDigitada=${encodeURIComponent(hora)}&tipoRegistro=${encodeURIComponent(tipo)}`;
-
-  // Abre a URL em um iframe invisível
-  const iframe = document.createElement('iframe');
-  iframe.style.display = 'none';
-  iframe.src = fullURL;
-  document.body.appendChild(iframe);
-
-  status.innerText = "Ponto registrado (verifique na planilha)";
-  status.style.color = "green";
-
-  document.getElementById("data").value = "";
-  document.getElementById("hora").value = "";
-  document.getElementById("tipo").selectedIndex = 0;
-
-  setTimeout(() => {
-    status.innerText = "";
-    document.body.removeChild(iframe); // limpa o iframe depois
-  }, 3000);
-}
-    </script>
-  </body>
+      setTimeout(() => {
+        status.innerText = "";
+        document.body.removeChild(iframe);
+      }, 3000);
+    }
+  </script>
+</body>
 </html>
