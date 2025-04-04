@@ -2,8 +2,7 @@ const CACHE_NAME = "ponto-app-cache-v1";
 const urlsToCache = [
   "index.html",
   "manifest.json",
-  "icon-192.png",
-  "icon-512.png"
+  "sw.js"
 ];
 
 self.addEventListener("install", function (event) {
